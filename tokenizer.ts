@@ -30,7 +30,22 @@ const LitteralWord = {
   "T": TokenType.T,
   "C": TokenType.C,
   "G": TokenType.G
-}
+};
+
+const LitteralWordMap = new Map<string, string>([
+  ["GAG", TokenType.BOOLEAN_TRUE],
+  ["GCG", TokenType.BOOLEAN_FALSE],
+  ["GTG", TokenType.MAYBE],
+  ["CC", TokenType.DECLARE_CONSTANT],
+  ["GC", TokenType.DECLARE_VARIABLE],
+  ["AA", TokenType.SET],
+  ["CT", TokenType.FUNCTION_OPEN],
+  ["TC", TokenType.FUNCTION_CLOSE],
+  ["A", TokenType.A],
+  ["T", TokenType.T],
+  ["C", TokenType.C],
+  ["G", TokenType.G]
+]);
 
 class Token {
   readonly type: string;
@@ -62,26 +77,24 @@ class Tokenizer {
   tokenize() {
     console.log("Tokenizing...")
 
-    let i: number = 0;
+    while (this.position < this.inputLength) {
+      const currentChar = this.getRealtiveChar(0);
 
-    while (this.position <= this.inputLength || i < 10) {
-      i++;
+      if (/\s/.test(currentChar)) {
+        console.log("Skipping space at", this.position);
+        this.position++;
+        continue;
+      }
+
       for (const key in LitteralWord) { // Check litterals first
-        if (
-          this.wordIs(key, true, (token) => {
-            if (token) {
-              console.log("Found word !")
-              this.tokens.push(token);
-            } else {
-              console.log("Not a litteral")
-            }
-          })
-        ) {
-          break;
-        }
+        this.wordIs(key, true, (token) => {
+          if (token) {
+            console.log("Found word !")
+            this.tokens.push(token);
+          }
+        })
       }
     }
-
     return this.tokens;
   }
 
@@ -92,7 +105,7 @@ class Tokenizer {
   private wordIs(word: string, advance?: boolean, callback?: (token: Token | null) => void) {
     console.log("Check if word is", word, "at char", this.position);
 
-    for (let i = 0;  i <= word.length;  i++) {
+    for (let i = 0;  i < word.length;  i++) {
       if (this.getRealtiveChar(i) !== word[i]) {
         if (callback) {
           callback(null);
@@ -100,16 +113,18 @@ class Tokenizer {
         return false;
       }
     }
+
     if (callback) {
-      callback(new Token(
-        TokenType.BOOLEAN_TRUE,
+      callback(
+        new Token(
+        LitteralWordMap.get(word) || "NULL",
         word,
         this.position,
         this.position + word.length,
-      ))
+      ));
     }
+
     this.position += advance ? word.length : 0;
-    
     return true;
   }
 }
