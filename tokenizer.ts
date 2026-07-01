@@ -59,6 +59,57 @@ class Tokenizer {
     this.tokens = [];
   }
 
+  // === Helper functions ===
+
+  private getRealtiveChar(offset: number) {
+    return this.input[this.position + offset];
+  }
+
+  private wordIs(
+    word: string,
+    advance?: boolean,
+    callback?: (token: Token | null) => void,
+  ) {
+    console.log("Check if word is", word, "at char", this.position);
+
+    for (let i = 0; i < word.length; i++) {
+      if (this.getRealtiveChar(i) !== word[i]) {
+        if (callback) {
+          callback(null);
+        }
+        return false;
+      }
+    }
+
+    if (
+      !(
+        this.getRealtiveChar(word.length) === " " ||
+        !this.getRealtiveChar(word.length) // EOF
+      )
+    ) {
+      if (callback) {
+        callback(null);
+      }
+      return false;
+    }
+
+    if (callback) {
+      callback(
+        new Token(
+          LiteralWord.get(word) || "NULL",
+          word,
+          this.position,
+          this.position + word.length,
+        ),
+      );
+    }
+
+    this.position += advance ? word.length : 0;
+    return true;
+  }
+
+  // === Class methods ===
+
   tokenize() {
     console.log("Tokenizing...");
 
@@ -141,53 +192,6 @@ class Tokenizer {
       this.position++;
     }
     return this.tokens;
-  }
-
-  private getRealtiveChar(offset: number) {
-    return this.input[this.position + offset];
-  }
-
-  private wordIs(
-    word: string,
-    advance?: boolean,
-    callback?: (token: Token | null) => void,
-  ) {
-    console.log("Check if word is", word, "at char", this.position);
-
-    for (let i = 0; i < word.length; i++) {
-      if (this.getRealtiveChar(i) !== word[i]) {
-        if (callback) {
-          callback(null);
-        }
-        return false;
-      }
-    }
-
-    if (
-      !(
-        this.getRealtiveChar(word.length) === " " ||
-        !this.getRealtiveChar(word.length) // EOF
-      )
-    ) {
-      if (callback) {
-        callback(null);
-      }
-      return false;
-    }
-
-    if (callback) {
-      callback(
-        new Token(
-          LiteralWord.get(word) || "NULL",
-          word,
-          this.position,
-          this.position + word.length,
-        ),
-      );
-    }
-
-    this.position += advance ? word.length : 0;
-    return true;
   }
 }
 
