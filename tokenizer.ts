@@ -1,38 +1,23 @@
 const TokenType = {
-  A: 'A',
-  T: 'T',
-  C: 'C',
-  G: 'G',
-  STRING: 'STRING',
-  NUMBER: 'NUMBER',
-  BOOLEAN_TRUE: 'BOOLEAN_TRUE', // GAG
-  BOOLEAN_FALSE: 'BOOLEAN_FALSE', // GCG
-  MAYBE: 'MAYBE', // GTG
-  FUNCTION_OPEN: 'FUNCTION_OPEN', // CT
-  FUNCTION_CLOSE: 'FUNCTION_CLOSE', // TC
-  DECLARE_CONSTANT: 'DECLARE_CONSTANT', // CC
-  DECLARE_VARIABLE: 'DECLARE_VARIABLE', // GC
-  SET: 'SET', // AA
+  A: "A",
+  T: "T",
+  C: "C",
+  G: "G",
+  STRING: "STRING",
+  NUMBER: "NUMBER",
+  BOOLEAN_TRUE: "BOOLEAN_TRUE", // GAG
+  BOOLEAN_FALSE: "BOOLEAN_FALSE", // GCG
+  MAYBE: "MAYBE", // GTG
+  FUNCTION_OPEN: "FUNCTION_OPEN", // CT
+  FUNCTION_CLOSE: "FUNCTION_CLOSE", // TC
+  DECLARE_CONSTANT: "DECLARE_CONSTANT", // CC
+  DECLARE_VARIABLE: "DECLARE_VARIABLE", // GC
+  SET: "SET", // AA
   // ==========
-  NAME: 'NAME', // Variable/function names
+  NAME: "NAME", // Variable/function names
 };
 
-const LitteralWord = {
-  "GAG": TokenType.BOOLEAN_TRUE,
-  "GCG": TokenType.BOOLEAN_FALSE,
-  "GTG": TokenType.MAYBE,
-  "CC": TokenType.DECLARE_CONSTANT,
-  "GC": TokenType.DECLARE_VARIABLE,
-  "AA": TokenType.SET,
-  "CT": TokenType.FUNCTION_OPEN,
-  "TC": TokenType.FUNCTION_CLOSE,
-  "A": TokenType.A,
-  "T": TokenType.T,
-  "C": TokenType.C,
-  "G": TokenType.G
-};
-
-const LitteralWordMap = new Map<string, string>([
+const LitteralWord = new Map<string, string>([
   ["GAG", TokenType.BOOLEAN_TRUE],
   ["GCG", TokenType.BOOLEAN_FALSE],
   ["GTG", TokenType.MAYBE],
@@ -44,7 +29,7 @@ const LitteralWordMap = new Map<string, string>([
   ["A", TokenType.A],
   ["T", TokenType.T],
   ["C", TokenType.C],
-  ["G", TokenType.G]
+  ["G", TokenType.G],
 ]);
 
 class Token {
@@ -69,13 +54,13 @@ class Tokenizer {
 
   constructor(input: string) {
     this.input = input;
-    this.inputLength = input.length
+    this.inputLength = input.length;
     this.position = 0;
     this.tokens = [];
   }
 
   tokenize() {
-    console.log("Tokenizing...")
+    console.log("Tokenizing...");
 
     while (this.position < this.inputLength) {
       const currentChar = this.getRealtiveChar(0);
@@ -86,13 +71,14 @@ class Tokenizer {
         continue;
       }
 
-      for (const key in LitteralWord) { // Check litterals first
+      for (const key in LitteralWord.keys()) {
+        // Check litterals first
         this.wordIs(key, true, (token) => {
           if (token) {
-            console.log("Found word !")
+            console.log("Found word !");
             this.tokens.push(token);
           }
-        })
+        });
       }
     }
     return this.tokens;
@@ -102,10 +88,14 @@ class Tokenizer {
     return this.input[this.position + offset];
   }
 
-  private wordIs(word: string, advance?: boolean, callback?: (token: Token | null) => void) {
+  private wordIs(
+    word: string,
+    advance?: boolean,
+    callback?: (token: Token | null) => void,
+  ) {
     console.log("Check if word is", word, "at char", this.position);
 
-    for (let i = 0;  i < word.length;  i++) {
+    for (let i = 0; i < word.length; i++) {
       if (this.getRealtiveChar(i) !== word[i]) {
         if (callback) {
           callback(null);
@@ -117,11 +107,12 @@ class Tokenizer {
     if (callback) {
       callback(
         new Token(
-        LitteralWordMap.get(word) || "NULL",
-        word,
-        this.position,
-        this.position + word.length,
-      ));
+          LitteralWord.get(word) || "NULL",
+          word,
+          this.position,
+          this.position + word.length,
+        ),
+      );
     }
 
     this.position += advance ? word.length : 0;
@@ -129,4 +120,4 @@ class Tokenizer {
   }
 }
 
-export { Token, Tokenizer }
+export { Token, Tokenizer };
