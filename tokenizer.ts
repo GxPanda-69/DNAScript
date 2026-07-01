@@ -65,12 +65,14 @@ class Tokenizer {
     while (this.position < this.inputLength) {
       const currentChar = this.getRealtiveChar(0);
 
+      // Skip spaces
       if (/\s/.test(currentChar)) {
         console.log("Skipping space at", this.position);
         this.position++;
         continue;
       }
 
+      // Check for literals
       for (let [key, value] of LiteralWord) {
         // Check litterals first
         if (
@@ -84,12 +86,36 @@ class Tokenizer {
           break;
         }
       }
+
       console.log(
         "Literal not found for char",
         currentChar,
         "at",
         this.position,
       );
+
+      // Check for strings
+      if (currentChar === "A") {
+        console.log("String at", this.position);
+
+        this.position++;
+
+        let start = this.position;
+        let char = this.getRealtiveChar(0);
+        let string = "";
+
+        while (char !== "A") {
+          string += char;
+          this.position++;
+          char = this.getRealtiveChar(0);
+        }
+
+        this.tokens.push(
+          new Token(TokenType.STRING, string, start, this.position - 1),
+        );
+        this.position++;
+        continue;
+      }
 
       let start = this.position;
       let name = "";
