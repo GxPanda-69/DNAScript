@@ -17,7 +17,7 @@ const TokenType = {
   NAME: "NAME", // Variable/function names
 };
 
-const LitteralWord = new Map<string, string>([
+const LiteralWord = new Map<string, string>([
   ["GAG", TokenType.BOOLEAN_TRUE],
   ["GCG", TokenType.BOOLEAN_FALSE],
   ["GTG", TokenType.MAYBE],
@@ -71,15 +71,48 @@ class Tokenizer {
         continue;
       }
 
-      for (const key in LitteralWord.keys()) {
+      for (let [key, value] of LiteralWord) {
         // Check litterals first
-        this.wordIs(key, true, (token) => {
-          if (token) {
-            console.log("Found word !");
-            this.tokens.push(token);
-          }
-        });
+        if (
+          this.wordIs(key, true, (token) => {
+            if (token) {
+              console.log("Found word !");
+              this.tokens.push(token);
+            }
+          })
+        ) {
+          break;
+        }
       }
+      console.log(
+        "Literal not found for char",
+        currentChar,
+        "at",
+        this.position,
+      );
+
+      let start = this.position;
+      let name = "";
+      let done = false;
+
+      while (!done) {
+        const char = this.input[this.position];
+
+        if (char === " " || !char) {
+          done = true;
+          break;
+        }
+        name += char;
+        this.position++;
+      }
+
+      if (name !== "") {
+        this.tokens.push(
+          new Token(TokenType.NAME, name, start, this.position - 1),
+        );
+      }
+
+      this.position++;
     }
     return this.tokens;
   }
@@ -104,10 +137,22 @@ class Tokenizer {
       }
     }
 
+    if (
+      !(
+        this.getRealtiveChar(word.length) === " " ||
+        !this.getRealtiveChar(word.length) // EOF
+      )
+    ) {
+      if (callback) {
+        callback(null);
+      }
+      return false;
+    }
+
     if (callback) {
       callback(
         new Token(
-          LitteralWord.get(word) || "NULL",
+          LiteralWord.get(word) || "NULL",
           word,
           this.position,
           this.position + word.length,
