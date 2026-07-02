@@ -108,6 +108,68 @@ class Tokenizer {
     return true;
   }
 
+  private getSurrounded(
+    surrounder: string,
+    callback?: (string: string, start: number, end: number) => void,
+    hasSpaces?: boolean,
+  ) {
+    if (this.getRealtiveChar(0) === surrounder) {
+      this.position++;
+
+      let start = this.position;
+      let char = this.getRealtiveChar(0);
+      let string = "";
+
+      while (
+        !(char === surrounder && (hasSpaces || this.getRealtiveChar(1) === " "))
+      ) {
+        if (!hasSpaces && char === " ") {
+          this.position = start - 1;
+          return null;
+        }
+        string += char;
+        this.position++;
+        char = this.getRealtiveChar(0);
+      }
+
+      this.position++;
+
+      if (callback) {
+        callback(string, start, this.position - 2);
+      }
+      return { start: start, string: string, end: this.position - 2 };
+    } else {
+      return undefined;
+    }
+  }
+
+  private fromBase4(string: string) {
+    const digits = new Map([
+      ["A", 0],
+      ["T", 1],
+      ["C", 2],
+      ["G", 3],
+    ]);
+
+    let result = 0;
+    let pos = 0;
+
+    while (pos < string.length) {
+      const digit = string[pos];
+
+      if (!digits.has(digit)) {
+        pos++;
+        continue;
+      }
+
+      result += (digits.get(digit) || 0) * Math.pow(4, string.length - pos - 1);
+
+      pos++;
+    }
+    console.log("Convertied number", string, "to", result);
+    return result;
+  }
+
   // === Class methods ===
 
   tokenize() {
@@ -146,27 +208,25 @@ class Tokenizer {
       );
 
       // Check for strings
-      if (currentChar === "A") {
-        console.log("String at", this.position);
 
-        this.position++;
+      this.getSurrounded(
+        "A",
+        (string, start, end) => {
+          this.tokens.push(new Token(TokenType.STRING, string, start, end));
+        },
+        true,
+      );
 
-        let start = this.position;
-        let char = this.getRealtiveChar(0);
-        let string = "";
+      console.log("Not a string");
 
-        while (char !== "A") {
-          string += char;
-          this.position++;
-          char = this.getRealtiveChar(0);
-        }
-
+      // Check for numbers
+      this.getSurrounded("T", (string, start, end) => {
         this.tokens.push(
-          new Token(TokenType.STRING, string, start, this.position - 1),
+          new Token(TokenType.NUMBER, this.fromBase4(string), start, end),
         );
-        this.position++;
-        continue;
-      }
+      });
+
+      console.log("Not a number");
 
       let start = this.position;
       let name = "";
@@ -174,6 +234,8 @@ class Tokenizer {
 
       while (!done) {
         const char = this.input[this.position];
+
+        console.log("Char at", this.position, "is", char);
 
         if (char === " " || !char) {
           done = true;
@@ -183,11 +245,9 @@ class Tokenizer {
         this.position++;
       }
 
-      if (name !== "") {
-        this.tokens.push(
-          new Token(TokenType.NAME, name, start, this.position - 1),
-        );
-      }
+      this.tokens.push(
+        new Token(TokenType.NAME, name, start, this.position - 1),
+      );
 
       this.position++;
     }
