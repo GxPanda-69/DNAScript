@@ -245,9 +245,11 @@ class Tokenizer {
         this.position++;
       }
 
-      this.tokens.push(
-        new Token(TokenType.NAME, name, start, this.position - 1),
-      );
+      if (name !== "") {
+        this.tokens.push(
+          new Token(TokenType.NAME, name, start, this.position - 1),
+        );
+      }
 
       this.position++;
     }
