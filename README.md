@@ -1,6 +1,6 @@
 # DNAScript
 
-DNAScript is an esoteric language built to imitate DNA notaion using only the letters A, T, C and G.
+DNAScript is an esoteric language built to imitate DNA notaion using only the letters A, T, C and G. It is neither fast nor easy to use but it's funny ig.
 
 # Grammar
 
