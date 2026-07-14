@@ -1,4 +1,4 @@
-const TokenType = {
+export const TokenType = {
   A: "A",
   T: "T",
   C: "C",
@@ -208,7 +208,6 @@ class Tokenizer {
       );
 
       // Check for strings
-
       this.getSurrounded(
         "A",
         (string, start, end) => {
