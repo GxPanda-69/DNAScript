@@ -2,7 +2,7 @@ import { Parser } from "./parser";
 import { Tokenizer } from "./tokenizer";
 
 let tokenizer = new Tokenizer(`
-  TCGG C AHello World !A G TCGG C AThis is a testA G`);
+  TCGG C AHello World !A AThis is a test lmaoA G`);
 tokenizer.tokenize();
 
 tokenizer.tokens.forEach((token) => {
