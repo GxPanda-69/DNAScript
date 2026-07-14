@@ -5,7 +5,7 @@ interface FunctionDictionary {
 }
 
 let functions : FunctionDictionary = {
-  "TCGG": (args: any[]) => {console.log(args[0].toString());}
+  "TCGG": (args: any[]) => args.forEach((arg) => console.log(arg))
 }
 
 class Node {
