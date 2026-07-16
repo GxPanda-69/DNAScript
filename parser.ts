@@ -4,58 +4,116 @@ interface FunctionDictionary {
   [key: string]: (...args: any[]) => any | void | undefined;
 }
 
-let functions : FunctionDictionary = {
-  "TCGG": (args: any[]) => args.forEach((arg) => console.log(arg))
+interface Node {
+  type:
+    | "Identifier"
+    | "StringLiteral"
+    | "NumericLiteral"
+    | "BooleanLiteral"
+    | "FunctionLiteral" // Values
+    | "CallExpression" // Function calls
+    | "DeclarationStatement" // Variable operations
+    | "AssignmentStatement"
+    | "UnaryExpression" // Operations
+    | "BinaryExpression"
+    | "ReturnStatement"
+    | "ForStatement";
+
+  // Identifier
+  name?: string;
+
+  // Literals
+  value?: string | number | boolean | undefined;
+
+  // FunctionLiterals
+  parameters?: Node[];
+  body?: Node[];
+
+  // CallExpression
+  base?: Node;
+  arguments?: Node[];
+
+  // DeclarationStatement AssignmentStatement
+  variable?: Node;
+  init?: Node;
+
+  // UnaryExpression
+  operator?: string;
+  argument?: Node;
+  // BinaryExpression
+  left?: Node;
+  right?: Node;
 }
 
-class Node {
-
+interface AbstractSyntaxTree {
+  root: Node[];
 }
+
+let functions: FunctionDictionary = {
+  TCGG: (args: any[]) => args.forEach((arg) => console.log(arg)),
+};
 
 class Parser {
-  readonly tokens: Token[]
-  ast: Node[]
-  position = 0
+  readonly tokens: Token[];
+  ast: AbstractSyntaxTree;
+  position = 0;
 
   constructor(tokens: Token[]) {
     this.tokens = tokens;
-    this.ast = [];
+    this.ast = { root: [] };
   }
 
   private getTokenRelative(offset?: number) {
-    return this.tokens[offset ? this.position + offset : this.position]
+    return this.tokens[offset ? this.position + offset : this.position];
   }
 
-  private getValue(offset?: number) {
-    if (!offset) { offset = 0; }
+  private getNode(): Node {
+    const firstToken: Token = this.getTokenRelative();
 
-    const firstToken: Token = this.getTokenRelative(offset);
+    if (!firstToken) {
+      return { type: "BooleanLiteral", value: undefined };
+    }
+
+    console.log(firstToken);
+
+    // Identifier
+    if (firstToken.type === TokenType.NAME) {
+      const identifier: Node = { type: "Identifier", name: firstToken.value };
+
+      this.position++; // Skip ahead to see what's in front
+
+      // Function Calls
+      if (this.getTokenRelative().type === TokenType.C) {
+        let args = [];
+        this.position++;
+
+        while (this.getTokenRelative().type !== TokenType.G) {
+          args.push(this.getNode());
+          this.position++;
+        }
+
+        return {
+          type: "CallExpression",
+          base: identifier,
+          arguments: args,
+        };
+      }
+    }
 
     if (firstToken.type === TokenType.STRING) {
-      return firstToken.value;
+      return { type: "StringLiteral", value: firstToken.value };
     }
+
+    if (firstToken.type === TokenType.NUMBER) {
+      return { type: "NumericLiteral", value: firstToken.value };
+    }
+
+    return { type: "BooleanLiteral", value: undefined };
   }
 
   parseTokens() {
     while (this.position < this.tokens.length) {
-      if (this.getTokenRelative().type === TokenType.NAME) { // Non-literals
-
-        if (this.getTokenRelative(1).type === TokenType.C) { // Functions
-          const funcName: string = this.getTokenRelative().value;
-          let args = [];
-          this.position += 2;
-
-          while (this.getTokenRelative().type !== TokenType.G) {
-            args.push(this.getValue() || this.getTokenRelative().value);
-            this.position++;
-          }
-
-          console.log(funcName, "function called with args", args);
-
-          functions[funcName](args);
-        }
-      }
-
+      this.ast.root.push(this.getNode());
       this.position++;
     }
   }
