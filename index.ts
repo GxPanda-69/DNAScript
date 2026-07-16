@@ -5,9 +5,7 @@ let tokenizer = new Tokenizer(`
   TCGG C AHello World !A AThis is a test lmaoA G`);
 tokenizer.tokenize();
 
-tokenizer.tokens.forEach((token) => {
-  console.log(token);
-});
-
 let parser = new Parser(tokenizer.tokens);
 parser.parseTokens();
+
+parser.ast.root.forEach((node) => console.log(node));
