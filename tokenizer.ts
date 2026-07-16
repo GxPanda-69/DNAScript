@@ -166,7 +166,7 @@ class Tokenizer {
 
       pos++;
     }
-    console.log("Convertied number", string, "to", result);
+    console.log("Converted number", string, "to", result);
     return result;
   }
 
