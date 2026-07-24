@@ -192,4 +192,4 @@ class Parser {
   }
 }
 
-export { Parser };
+export { Parser, AbstractSyntaxTree, Node };
