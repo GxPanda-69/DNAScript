@@ -49,10 +49,6 @@ interface AbstractSyntaxTree {
   root: Node[];
 }
 
-let functions: FunctionDictionary = {
-  TCGG: (args: any[]) => args.forEach((arg) => console.log(arg)),
-};
-
 class Parser {
   readonly tokens: Token[];
   ast: AbstractSyntaxTree;
@@ -70,11 +66,11 @@ class Parser {
   private getNode(): Node {
     const firstToken: Token = this.getTokenRelative();
 
+    console.log("Translating", firstToken);
+
     if (!firstToken) {
       return { type: "BooleanLiteral", value: undefined };
     }
-
-    console.log(firstToken);
 
     // Identifier
     if (firstToken.type === TokenType.NAME) {
@@ -88,8 +84,8 @@ class Parser {
         this.position++;
 
         while (this.getTokenRelative().type !== TokenType.G) {
-          this.position++;
           args.push(this.getNode());
+          this.position++;
         }
 
         return {
@@ -110,6 +106,7 @@ class Parser {
       }
 
       // Else return the identifier
+      this.position--;
       return identifier;
     }
 
@@ -154,6 +151,9 @@ class Parser {
           this.position++;
           const currentToken = this.getTokenRelative();
           if (currentToken.type !== TokenType.NAME) {
+            if (currentToken.type === TokenType.G) {
+              break;
+            }
             throw new Error("Unexpected token at position " + this.position);
           }
           parameters.push({
@@ -164,6 +164,8 @@ class Parser {
       }
 
       let body: Node[] = [];
+
+      this.position++;
 
       while (this.getTokenRelative().type !== TokenType.FUNCTION_CLOSE) {
         body.push(this.getNode());
@@ -176,6 +178,8 @@ class Parser {
         body: body,
       };
     }
+
+    console.log("Returning undefined for token", firstToken);
 
     return { type: "BooleanLiteral", value: undefined };
   }
