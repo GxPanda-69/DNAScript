@@ -1,7 +1,9 @@
 import { Parser } from "./parser";
 import { Tokenizer } from "./tokenizer";
 
-let tokenizer = new Tokenizer(`GC HelloWorldFunc AA CT TCGG C Message G TC`);
+let tokenizer = new Tokenizer(
+  `GC MessageContent AA AHello WorldA GC HelloWorldFunc AA CT C Message G TCGG C Message G TC HelloWorldFunc C MessageContent G MessageContent AA AHello World number twoA HelloWorldFunc C MessageContent G`,
+);
 
 console.log("=== TOKENIZATION OUTPUT IN");
 tokenizer.tokenize();
@@ -18,5 +20,6 @@ parser.parseTokens();
 console.log("=== PARSING OUTPUT OUT ===");
 
 console.log("=== AST IN ===");
-parser.ast.root.forEach((node) => console.dir(node, { depth: 100 }));
+console.dir(parser.ast, { depth: 256 });
+console.log(JSON.stringify(parser.ast));
 console.log("=== AST OUT ===");
