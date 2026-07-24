@@ -16,7 +16,7 @@ DNAScript is an esoteric language built to imitate DNA notaion using only the le
 
 `GTG` : Maybe (undefined)
 
-`CT C <args> G <code> CT` or `CT <code> TC` : functions
+`CT C <args> G <code> CT` or `CT <code> TC` : functions ; they are treated as a first party class in DNAscript (like Lua)
 
 ## Variables
 
