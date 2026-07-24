@@ -88,8 +88,8 @@ class Parser {
         this.position++;
 
         while (this.getTokenRelative().type !== TokenType.G) {
-          args.push(this.getNode());
           this.position++;
+          args.push(this.getNode());
         }
 
         return {
@@ -105,9 +105,12 @@ class Parser {
         return {
           type: "AssignmentStatement",
           variable: identifier,
-          init: this.getNode()
-        }
+          init: this.getNode(),
+        };
       }
+
+      // Else return the identifier
+      return identifier;
     }
 
     if (firstToken.type === TokenType.DECLARE_VARIABLE) {
@@ -117,8 +120,8 @@ class Parser {
       }
       const variableIdentifier: Node = {
         type: "Identifier",
-        name: this.getTokenRelative().value
-      }
+        name: this.getTokenRelative().value,
+      };
       this.position++;
       if (this.getTokenRelative().type !== TokenType.SET) {
         throw new Error("Unexpected token at position " + this.position);
@@ -127,16 +130,51 @@ class Parser {
       return {
         type: "DeclarationStatement",
         variable: variableIdentifier,
-        init: this.getNode()
-      }
+        init: this.getNode(),
+      };
     }
 
+    // Strings
     if (firstToken.type === TokenType.STRING) {
       return { type: "StringLiteral", value: firstToken.value };
     }
 
+    // Numbers
     if (firstToken.type === TokenType.NUMBER) {
       return { type: "NumericLiteral", value: firstToken.value };
+    }
+
+    // Function
+    if (firstToken.type === TokenType.FUNCTION_OPEN) {
+      let parameters: Node[] = [];
+
+      this.position++;
+      if (this.getTokenRelative().type === TokenType.C) {
+        while (this.getTokenRelative().type !== TokenType.G) {
+          this.position++;
+          const currentToken = this.getTokenRelative();
+          if (currentToken.type !== TokenType.NAME) {
+            throw new Error("Unexpected token at position " + this.position);
+          }
+          parameters.push({
+            type: "Identifier",
+            name: currentToken.value,
+          });
+        }
+      }
+
+      let body: Node[] = [];
+
+      while (this.getTokenRelative().type !== TokenType.FUNCTION_CLOSE) {
+        body.push(this.getNode());
+        this.position++;
+      }
+
+      return {
+        type: "FunctionLiteral",
+        parameters: parameters,
+        body: body,
+      };
     }
 
     return { type: "BooleanLiteral", value: undefined };
