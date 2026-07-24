@@ -98,6 +98,37 @@ class Parser {
           arguments: args,
         };
       }
+
+      // Variable assignment
+      if (this.getTokenRelative().type === TokenType.SET) {
+        this.position++;
+        return {
+          type: "AssignmentStatement",
+          variable: identifier,
+          init: this.getNode()
+        }
+      }
+    }
+
+    if (firstToken.type === TokenType.DECLARE_VARIABLE) {
+      this.position++;
+      if (this.getTokenRelative().type !== TokenType.NAME) {
+        throw new Error("Unexpected token at position " + this.position);
+      }
+      const variableIdentifier: Node = {
+        type: "Identifier",
+        name: this.getTokenRelative().value
+      }
+      this.position++;
+      if (this.getTokenRelative().type !== TokenType.SET) {
+        throw new Error("Unexpected token at position " + this.position);
+      }
+      this.position++;
+      return {
+        type: "DeclarationStatement",
+        variable: variableIdentifier,
+        init: this.getNode()
+      }
     }
 
     if (firstToken.type === TokenType.STRING) {
