@@ -175,11 +175,13 @@ class Tokenizer {
   tokenize() {
     console.log("Tokenizing...");
 
+    this.input = this.input.replace(/(\r\n|\n|\r)/gm, " ");
+
     while (this.position < this.inputLength) {
       const currentChar = this.getRealtiveChar(0);
 
       // Skip spaces
-      if (/\s/.test(currentChar)) {
+      if (/(\s)/.test(currentChar)) {
         console.log("Skipping space at", this.position);
         this.position++;
         continue;
