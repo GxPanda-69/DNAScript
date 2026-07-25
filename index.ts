@@ -1,3 +1,4 @@
+import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
 import { Tokenizer } from "./tokenizer";
 
@@ -23,3 +24,8 @@ console.log("=== AST IN ===");
 console.dir(parser.ast, { depth: 256 });
 console.log(JSON.stringify(parser.ast));
 console.log("=== AST OUT ===");
+
+console.log("=== INTERPRETER IN ===");
+const interpreter = new Interpreter();
+interpreter.Execute(parser.ast);
+console.log("=== INTERPRETER OUT ===");
