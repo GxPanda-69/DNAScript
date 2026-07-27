@@ -17,15 +17,16 @@ interface Node {
     | "UnaryExpression" // Operations
     | "BinaryExpression"
     | "ReturnStatement"
-    | "ForStatement";
+    | "IfStatement"
+    | "WhileStatement";
 
   // Identifier
   name?: string;
 
-  // Literals
-  value?: string | number | boolean | undefined;
+  // Literals and ReturnStatement
+  value?: string | number | boolean | Node | undefined;
 
-  // FunctionLiterals
+  // FunctionLiterals, IfStatement, WhileStatement
   parameters?: Node[];
   body?: Node[];
 
@@ -43,6 +44,10 @@ interface Node {
   // BinaryExpression
   left?: Node;
   right?: Node;
+
+  // IfStatement
+  condition?: Node;
+  elseBody?: Node[];
 }
 
 interface AbstractSyntaxTree {
@@ -65,8 +70,6 @@ class Parser {
 
   private getNode(): Node {
     const firstToken: Token = this.getTokenRelative();
-
-    console.log("Translating", firstToken);
 
     if (!firstToken) {
       return { type: "BooleanLiteral", value: undefined };
@@ -179,7 +182,74 @@ class Parser {
       };
     }
 
-    console.log("Returning undefined for token", firstToken);
+    // If Statement: GA <condition> A body T [GG A elseBody T]
+    if (firstToken.type === TokenType.IF) {
+      this.position++;
+      const condition = this.getNode();
+      // Skip to body opener A
+      while (this.getTokenRelative() && this.getTokenRelative().type !== TokenType.A) {
+        this.position++;
+      }
+      this.position++;
+      let body: Node[] = [];
+      while (this.getTokenRelative().type !== TokenType.T) {
+        body.push(this.getNode());
+        this.position++;
+      }
+
+      let elseBody: Node[] | undefined;
+      if (this.getTokenRelative()?.type === TokenType.ELSE) {
+        this.position++;
+        if (this.getTokenRelative().type !== TokenType.A) {
+          throw new Error("Expected A for else body at position " + this.position);
+        }
+        this.position++;
+        elseBody = [];
+        while (this.getTokenRelative().type !== TokenType.T) {
+          elseBody.push(this.getNode());
+          this.position++;
+        }
+      }
+
+      return {
+        type: "IfStatement",
+        condition: condition,
+        body: body,
+        elseBody: elseBody,
+      };
+    }
+
+    // While Statement: GT <condition> A body T
+    if (firstToken.type === TokenType.WHILE) {
+      this.position++;
+      const condition = this.getNode();
+      // Skip to body opener A
+      while (this.getTokenRelative() && this.getTokenRelative().type !== TokenType.A) {
+        this.position++;
+      }
+      this.position++;
+      let body: Node[] = [];
+      while (this.getTokenRelative().type !== TokenType.T) {
+        body.push(this.getNode());
+        this.position++;
+      }
+
+      return {
+        type: "WhileStatement",
+        condition: condition,
+        body: body,
+      };
+    }
+
+    // Return Statement: CA expression
+    if (firstToken.type === TokenType.RETURN) {
+      this.position++;
+      const value = this.getNode();
+      return {
+        type: "ReturnStatement",
+        value: value,
+      };
+    }
 
     return { type: "BooleanLiteral", value: undefined };
   }

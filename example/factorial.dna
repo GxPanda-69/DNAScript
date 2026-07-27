@@ -1,0 +1,11 @@
+GC factorial AA CT C n G
+  GC result AA TTT
+  GT GAT C n TAT G A
+    GC result AA CAT C result n G
+    GC n AA CAG C n TTT G
+  T
+  CA result
+TC
+
+GC fiveFact AA factorial C TTTT G
+TCGG C fiveFact G

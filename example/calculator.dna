@@ -1,0 +1,8 @@
+GC a AA TTTT
+GC b AA TGT
+GC sum AA CAC C a b G
+GC diff AA CAG C a b G
+GC prod AA CAT C a b G
+TCGG C sum G
+TCGG C diff G
+TCGG C prod G

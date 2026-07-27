@@ -1,13 +1,77 @@
 import { AbstractSyntaxTree, Node } from "./parser";
 
+class ReturnException extends Error {
+  value: any;
+  constructor(value: any) {
+    super();
+    this.value = value;
+  }
+}
+
 class Interpreter {
-  isConstant: Map<string, boolean> = new Map([["TCGG", true]]);
+  isConstant: Map<string, boolean> = new Map([
+    ["TCGG", true],
+    ["CAC", true],
+    ["CAG", true],
+    ["CAT", true],
+    ["CCG", true],
+    ["GAC", true],
+    ["GAT", true],
+  ]);
 
   constants: Map<string, any> = new Map([
     [
       "TCGG",
       (args: Node[]) =>
         args.forEach((arg) => console.log(this.getValue(this.getValue(arg)))),
+    ],
+    [
+      "CAC",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left + right;
+      },
+    ],
+    [
+      "CAG",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left - right;
+      },
+    ],
+    [
+      "CAT",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left * right;
+      },
+    ],
+    [
+      "CCG",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left / right;
+      },
+    ],
+    [
+      "GAC",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left === right;
+      },
+    ],
+    [
+      "GAT",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left !== right;
+      },
     ],
   ]);
 
@@ -24,8 +88,10 @@ class Interpreter {
       return this.variables.get(variable.name);
     }
   }
-
-  private getValue(node: Node): any {
+// skibid shitma
+  private getValue(node: any): any {
+    if (node === undefined || node === null) return node;
+    if (typeof node !== "object" || !("type" in node)) return node;
     if (
       node.type === "StringLiteral" ||
       node.type === "NumericLiteral" ||
@@ -35,6 +101,9 @@ class Interpreter {
     }
     if (node.type === "Identifier") {
       return this.getVariable(node);
+    }
+    if (node.type === "CallExpression") {
+      return this.runNode(node);
     }
     return node;
   }
@@ -47,10 +116,11 @@ class Interpreter {
       throw new Error("You cannot change the value of a constant");
     }
     if (init) {
+      const value = this.getValue(init);
       if (isConstant) {
-        this.constants.set(variable.name, init);
+        this.constants.set(variable.name, value);
       } else {
-        this.variables.set(variable.name, init);
+        this.variables.set(variable.name, value);
       }
     } else {
       if (!isConstant) {
@@ -61,14 +131,14 @@ class Interpreter {
     }
   }
 
-  private runNode(node: Node) {
+  private runNode(node: Node): any {
     if (node.type === "CallExpression") {
       if (!node.base) {
         throw new Error("Interpreter error: nameless function call");
       }
       const variable: Node | Function = this.getVariable(node.base);
       if (typeof variable === "function") {
-        variable(node.arguments);
+        return variable(node.arguments);
       }
       if (typeof variable === "object" && variable.body) {
         if (variable.parameters && node.arguments) {
@@ -84,8 +154,24 @@ class Interpreter {
             );
           }
         }
-        variable.body.forEach((bodyNode) => this.runNode(bodyNode));
-        if (variable.parameters && node.arguments) {
+        try {
+          variable.body.forEach((bodyNode) => this.runNode(bodyNode));
+        } catch (e) {
+          if (e instanceof ReturnException) {
+            if (variable.parameters) {
+              for (
+                let paramIdx = 0;
+                paramIdx < variable.parameters.length;
+                paramIdx++
+              ) {
+                this.setVariable(variable.parameters[paramIdx], null, false);
+              }
+            }
+            return e.value;
+          }
+          throw e;
+        }
+        if (variable.parameters) {
           for (
             let paramIdx = 0;
             paramIdx < variable.parameters.length;
@@ -106,7 +192,31 @@ class Interpreter {
       }
       this.setVariable(node.variable, node.init);
     }
+
+    if (node.type === "IfStatement") {
+      const condition = this.getValue(node.condition!);
+      if (condition) {
+        node.body!.forEach((bodyNode) => this.runNode(bodyNode));
+      } else if (node.elseBody) {
+        node.elseBody.forEach((bodyNode) => this.runNode(bodyNode));
+      }
+    }
+
+    if (node.type === "WhileStatement") {
+      while (this.getValue(node.condition!)) {
+        node.body!.forEach((bodyNode) => this.runNode(bodyNode));
+      }
+    }
+
+    if (node.type === "ReturnStatement") {
+      const value = node.value && typeof node.value === 'object' && 'type' in node.value
+        ? this.getValue(node.value as Node)
+        : node.value;
+      throw new ReturnException(value);
+    }
   }
+  
+// Execute = ({ root }: any) => root.map(this.runNode.bind(this));
 
   Execute(ast: AbstractSyntaxTree) {
     const root = ast.root;

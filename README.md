@@ -1,43 +1,64 @@
 # DNAScript
 
-DNAScript is an esoteric language built to imitate DNA notaion using only the letters A, T, C and G. It is neither fast nor easy to use but it's funny ig.
+Esoteric language. Uses only A, T, C, G to imitate DNA.
 
-# Grammar
+## Usage
+
+```
+npm install
+npx ts-node run.ts example/hello.dna
+```
 
 ## Types
 
-`A<string>A` : string (use `TTT` as an escape character, so "A string" would be `ATTTA stringA`)
+| Syntax | Type | Notes |
+|--------|------|-------|
+| `A<text>A` | String | `TTT` is escape char |
+| `T<digits>T` | Number | Base 4: A=0 T=1 C=2 G=3 |
+| `GAG` | Boolean | True |
+| `GCG` | Boolean | False |
+| `GTG` | Undefined | Maybe |
 
-`T<number>T` : number in base 4 (A=0; T=1; C=2; G=3, 12=`TGAT`)
-
-`GAG` : True
-
-`GCG` : False
-
-`GTG` : Maybe (undefined)
-
-`CT C <args> G <code> CT` or `CT <code> TC` : functions ; they are treated as a first party class in DNAscript (like Lua)
-
-## Variables
-
-`CC <name> AA <init>` : declare a constant
-
-`GC <name> AA <init>` : declare a variable
-
-(Use `AA` for dynamic or `AC` for static)
-
-`<variable> AA <value>` : change a variable's value
+**Number examples:** 5 = `TTTT`, 12 = `TGAT`, 0 = `TAT`
 
 ## Brackets
 
-`A` : open statement (like `{` in js)
+| Char | Role |
+|------|------|
+| `A` | Open block |
+| `T` | Close block |
+| `C` | Open args |
+| `G` | Close args |
 
-`T` : close statement (`}`)
+## Variables
 
-`C` : open args (like `(` in js)
-
-`G` : close args (`)`)
+`GC <name> AA <init>` — declare variable
+`<name> AA <value>` — set variable
 
 ## Functions
 
-`TCGG C <string> G` : logs the string to the output
+`CT C <params> G <body> TC` — define function
+`<name> C <args> G` — call function
+
+## Built-ins
+
+| Code | Action |
+|------|--------|
+| `TCGG C <arg> G` | Print |
+| `CAC C a b G` | Add |
+| `CAG C a b G` | Subtract |
+| `CAT C a b G` | Multiply |
+| `CCG C a b G` | Divide |
+| `GAC C a b G` | Equal |
+| `GAT C a b G` | Not equal |
+
+## Control Flow
+
+`GA <cond> A <body> T` — if
+`GA <cond> A <body1> T GG A <body2> T` — if/else
+`GT <cond> A <body> T` — while loop
+`CA <expr>` — return
+
+## Examples
+
+See `example/` folder.

@@ -1,0 +1,8 @@
+GC x AA TTTT
+GC y AA TGT
+
+GA GAT C x y G A
+  TCGG C ANot equalA G
+T GG A
+  TCGG C AequalA G
+T

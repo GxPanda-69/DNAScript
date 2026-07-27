@@ -1,0 +1,10 @@
+GC MessageContent AA AHello WorldA
+
+GC HelloWorldFunc AA CT
+  C Message G
+  TCGG C Message G
+TC
+
+HelloWorldFunc C MessageContent G
+MessageContent AA AHello World number twoA
+HelloWorldFunc C MessageContent G
