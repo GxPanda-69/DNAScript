@@ -33,11 +33,13 @@ npx ts-node run.ts example/hello.dna
 ## Variables
 
 `GC <name> AA <init>` — declare variable
+
 `<name> AA <value>` — set variable
 
 ## Functions
 
 `CT C <params> G <body> TC` — define function
+
 `<name> C <args> G` — call function
 
 ## Built-ins
@@ -64,10 +66,12 @@ npx ts-node run.ts example/hello.dna
 
 ## Control Flow
 
-`GA <cond> A <body> T` — if
-`GA <cond> A <body1> T GG A <body2> T` — if/else
-`GT <cond> A <body> T` — while loop
-`CA <expr>` — return
+| Expression                             | Meaning    |
+| -------------------------------------- | ---------- |
+| `GA <cond> A <body> T`                 | if         |
+| `GA <cond> A <body1> T GG A <body2> T` | if/else    |
+| `GT <cond> A <body> T`                 | while loop |
+| `CA <expr>`                            | return     |
 
 ## Examples
 
