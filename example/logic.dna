@@ -1,0 +1,14 @@
+
+
+GC a AA GAG
+GC b AA GCG
+
+TCGG C Aa=A a G
+TCGG C Ab=A b G
+
+TCGG C Aa and b =A TCC C a b G G
+TCGG C Aa or b =A TAC C a b G G
+TCGG C Aa xor b =A TCA C a b G G
+TCGG C Aa nand b =A TAA C a b G G
+TCGG C Anot a =A TA C a G G
+TCGG C Anot b =A TA C b G G
