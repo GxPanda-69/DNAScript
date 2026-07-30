@@ -95,7 +95,6 @@ class Parser {
         this.position++;
 
         while (this.getTokenRelative().type !== TokenType.G) {
-          const arg = this.getNode();
           args.push(this.getNode());
           this.position++;
         }
@@ -266,6 +265,13 @@ class Parser {
         type: "ReturnStatement",
         value: value,
       };
+    }
+
+    if (firstToken.type === TokenType.BOOLEAN_TRUE) {
+      return { type: "BooleanLiteral", value: true };
+    }
+    if (firstToken.type === TokenType.BOOLEAN_FALSE) {
+      return { type: "BooleanLiteral", value: false };
     }
 
     return { type: "BooleanLiteral", value: undefined };
