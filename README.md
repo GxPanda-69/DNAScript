@@ -56,6 +56,11 @@ npx ts-node run.ts example/hello.dna
 | `GGC C a b G`        | Is `a` ower or equal to `b`         |
 | `CGG C a b G`        | Is `a` higher than `b`              |
 | `CGC C a b G`        | Is `a` higher or equal to `b`       |
+| `TA C a G`           | NOT `a`                             |
+| `TCC C a b G`        | `a` AND `b`                         |
+| `TAC C a b G`        | `a` OR `b`                          |
+| `TCA C a b G`        | `a` XOR `b`                         |
+| `TAA C a b G`        | `a` NAND `b`                        |
 
 ## Control Flow
 

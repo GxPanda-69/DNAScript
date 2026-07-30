@@ -1,3 +1,4 @@
+import * as readline from "readline";
 import { AbstractSyntaxTree, Node } from "./parser";
 
 class ReturnException extends Error {
@@ -8,9 +9,15 @@ class ReturnException extends Error {
   }
 }
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
 class Interpreter {
   isConstant: Map<string, boolean> = new Map([
     ["TCGG", true],
+    ["GGCT", true],
     ["CAC", true],
     ["CAG", true],
     ["CAT", true],
@@ -21,6 +28,11 @@ class Interpreter {
     ["GGC", true],
     ["CGG", true],
     ["CGC", true],
+    ["TA", true],
+    ["TCC", true],
+    ["TAC", true],
+    ["TCA", true],
+    ["TAA", true],
   ]);
 
   constants: Map<string, any> = new Map([
@@ -28,6 +40,18 @@ class Interpreter {
       "TCGG",
       (args: Node[]) =>
         args.forEach((arg) => console.log(this.getValue(this.getValue(arg)))),
+    ],
+    [
+      "GGCT",
+      (args: Node[]) => {
+        new Promise((resolve, reject) => {
+          rl.question(this.getValue(args[0]), (answer) => {
+            resolve(answer);
+          });
+        }).then((answer) => {
+          return answer;
+        });
+      },
     ],
     [
       "CAC",
@@ -109,6 +133,44 @@ class Interpreter {
         return left >= right;
       },
     ],
+    [
+      "TA",
+      (args: Node[]) => {
+        return !this.getValue(this.getValue(args[0]));
+      },
+    ],
+    [
+      "TCC",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left && right;
+      },
+    ],
+    [
+      "TAC",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left || right;
+      },
+    ],
+    [
+      "TCA",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return (left && !right) || (!left && right);
+      },
+    ],
+    [
+      "TAA",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return !(left && right);
+      },
+    ],
   ]);
 
   variables: Map<string, any> = new Map();
@@ -168,21 +230,27 @@ class Interpreter {
   }
 
   private runNode(node: Node): any {
+    // Function calls
     if (node.type === "CallExpression") {
       if (!node.base) {
         throw new Error("Interpreter error: nameless function call");
       }
-      const variable: Node | Function = this.getVariable(node.base);
+      const variable: Node | Function = this.getVariable(node.base); // Function name
       if (typeof variable === "function") {
-        return variable(node.arguments);
+        return variable(node.arguments); // Directly call the function (won't happen)
       }
+
+      // Node function
       if (typeof variable === "object" && variable.body) {
+        // Check if both the function definition and the function call have args
         if (variable.parameters && node.arguments) {
+          // Iterate through the arguments and parameters in parallel
           for (
             let paramIdx = 0;
             paramIdx < variable.parameters.length;
             paramIdx++
           ) {
+            // Set the variable corresponding to the argument to the parameter of the same index
             this.setVariable(
               variable.parameters[paramIdx],
               this.getValue(node.arguments[paramIdx]),
@@ -190,9 +258,11 @@ class Interpreter {
             );
           }
         }
+        // Run the nodes
         try {
           variable.body.forEach((bodyNode) => this.runNode(bodyNode));
         } catch (e) {
+          // Handle exceptions ig
           if (e instanceof ReturnException) {
             if (variable.parameters) {
               for (
@@ -261,6 +331,8 @@ class Interpreter {
     root.forEach((node) => {
       this.runNode(node);
     });
+
+    rl.close();
   }
 }
 
