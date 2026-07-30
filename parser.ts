@@ -1,5 +1,13 @@
 import { Token, TokenType } from "./tokenizer";
 
+class ParsingException extends Error {
+  value: any;
+  constructor(value: any) {
+    super();
+    this.value = value;
+  }
+}
+
 interface FunctionDictionary {
   [key: string]: (...args: any[]) => any | void | undefined;
 }
@@ -87,6 +95,7 @@ class Parser {
         this.position++;
 
         while (this.getTokenRelative().type !== TokenType.G) {
+          const arg = this.getNode();
           args.push(this.getNode());
           this.position++;
         }
@@ -187,7 +196,10 @@ class Parser {
       this.position++;
       const condition = this.getNode();
       // Skip to body opener A
-      while (this.getTokenRelative() && this.getTokenRelative().type !== TokenType.A) {
+      while (
+        this.getTokenRelative() &&
+        this.getTokenRelative().type !== TokenType.A
+      ) {
         this.position++;
       }
       this.position++;
@@ -201,7 +213,9 @@ class Parser {
       if (this.getTokenRelative()?.type === TokenType.ELSE) {
         this.position++;
         if (this.getTokenRelative().type !== TokenType.A) {
-          throw new Error("Expected A for else body at position " + this.position);
+          throw new Error(
+            "Expected A for else body at position " + this.position,
+          );
         }
         this.position++;
         elseBody = [];
@@ -224,7 +238,10 @@ class Parser {
       this.position++;
       const condition = this.getNode();
       // Skip to body opener A
-      while (this.getTokenRelative() && this.getTokenRelative().type !== TokenType.A) {
+      while (
+        this.getTokenRelative() &&
+        this.getTokenRelative().type !== TokenType.A
+      ) {
         this.position++;
       }
       this.position++;
