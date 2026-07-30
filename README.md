@@ -42,19 +42,20 @@ npx ts-node run.ts example/hello.dna
 
 ## Built-ins
 
-| Code             | Action             |
-| ---------------- | ------------------ |
-| `TCGG C <arg> G` | Print              |
-| `CAC C a b G`    | Add                |
-| `CAG C a b G`    | Subtract           |
-| `CAT C a b G`    | Multiply           |
-| `CCG C a b G`    | Divide             |
-| `GAC C a b G`    | Equal              |
-| `GAT C a b G`    | Not equal          |
-| `GGG C a b G`    | Lower than         |
-| `GGC C a b G`    | Lower or equal to  |
-| `CGG C a b G`    | Higher than        |
-| `CGC C a b G`    | Higher or equal to |
+| Code                 | Action                              |
+| -------------------- | ----------------------------------- |
+| `TCGG C ...<args> G` | Print the given arguments           |
+| `GGCT C <arg> G`     | Take input, `<arg>` is the question |
+| `CAC C a b G`        | Add `a` and `b`                     |
+| `CAG C a b G`        | Subtract `a` to `b`                 |
+| `CAT C a b G`        | Multiply `a` and `b`                |
+| `CCG C a b G`        | Divide `a` by `b`                   |
+| `GAC C a b G`        | Is `a` equal to `b`                 |
+| `GAT C a b G`        | If `a` not equal to `b`             |
+| `GGG C a b G`        | Is `a` lower than `b`               |
+| `GGC C a b G`        | Is `a` ower or equal to `b`         |
+| `CGG C a b G`        | Is `a` higher than `b`              |
+| `CGC C a b G`        | Is `a` higher or equal to `b`       |
 
 ## Control Flow
 
