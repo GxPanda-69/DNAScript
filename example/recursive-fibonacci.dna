@@ -1,0 +1,10 @@
+GC NextNumber AA 
+CT C previousA previousB G
+  GC current AA CAC C previousA previousB G
+  TCGG C current G
+  GA CCG C current TGGGGGGGGGGGGGGGGT G A
+    NextNumber C previousB current G
+  T
+TC
+
+NextNumber C TTT TTT G
