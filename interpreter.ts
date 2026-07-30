@@ -17,6 +17,10 @@ class Interpreter {
     ["CCG", true],
     ["GAC", true],
     ["GAT", true],
+    ["GGG", true],
+    ["GGC", true],
+    ["CGG", true],
+    ["CGC", true],
   ]);
 
   constants: Map<string, any> = new Map([
@@ -73,6 +77,38 @@ class Interpreter {
         return left !== right;
       },
     ],
+    [
+      "CCC",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left < right;
+      },
+    ],
+    [
+      "CCG",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left <= right;
+      },
+    ],
+    [
+      "GCC",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left > right;
+      },
+    ],
+    [
+      "GCG",
+      (args: Node[]) => {
+        const left = this.getValue(this.getValue(args[0]));
+        const right = this.getValue(this.getValue(args[1]));
+        return left >= right;
+      },
+    ],
   ]);
 
   variables: Map<string, any> = new Map();
@@ -88,7 +124,7 @@ class Interpreter {
       return this.variables.get(variable.name);
     }
   }
-// skibid shitma
+  // skibid shitma
   private getValue(node: any): any {
     if (node === undefined || node === null) return node;
     if (typeof node !== "object" || !("type" in node)) return node;
@@ -209,14 +245,15 @@ class Interpreter {
     }
 
     if (node.type === "ReturnStatement") {
-      const value = node.value && typeof node.value === 'object' && 'type' in node.value
-        ? this.getValue(node.value as Node)
-        : node.value;
+      const value =
+        node.value && typeof node.value === "object" && "type" in node.value
+          ? this.getValue(node.value as Node)
+          : node.value;
       throw new ReturnException(value);
     }
   }
-  
-// Execute = ({ root }: any) => root.map(this.runNode.bind(this));
+
+  // Execute = ({ root }: any) => root.map(this.runNode.bind(this));
 
   Execute(ast: AbstractSyntaxTree) {
     const root = ast.root;

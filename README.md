@@ -11,24 +11,24 @@ npx ts-node run.ts example/hello.dna
 
 ## Types
 
-| Syntax | Type | Notes |
-|--------|------|-------|
-| `A<text>A` | String | `TTT` is escape char |
-| `T<digits>T` | Number | Base 4: A=0 T=1 C=2 G=3 |
-| `GAG` | Boolean | True |
-| `GCG` | Boolean | False |
-| `GTG` | Undefined | Maybe |
+| Syntax       | Type      | Notes                   |
+| ------------ | --------- | ----------------------- |
+| `A<text>A`   | String    | `TTT` is escape char    |
+| `T<digits>T` | Number    | Base 4: A=0 T=1 C=2 G=3 |
+| `GAG`        | Boolean   | True                    |
+| `GCG`        | Boolean   | False                   |
+| `GTG`        | Undefined | Maybe                   |
 
 **Number examples:** 5 = `TTTT`, 12 = `TGAT`, 0 = `TAT`
 
 ## Brackets
 
-| Char | Role |
-|------|------|
-| `A` | Open block |
-| `T` | Close block |
-| `C` | Open args |
-| `G` | Close args |
+| Char | Role        |
+| ---- | ----------- |
+| `A`  | Open block  |
+| `T`  | Close block |
+| `C`  | Open args   |
+| `G`  | Close args  |
 
 ## Variables
 
@@ -42,15 +42,19 @@ npx ts-node run.ts example/hello.dna
 
 ## Built-ins
 
-| Code | Action |
-|------|--------|
-| `TCGG C <arg> G` | Print |
-| `CAC C a b G` | Add |
-| `CAG C a b G` | Subtract |
-| `CAT C a b G` | Multiply |
-| `CCG C a b G` | Divide |
-| `GAC C a b G` | Equal |
-| `GAT C a b G` | Not equal |
+| Code             | Action             |
+| ---------------- | ------------------ |
+| `TCGG C <arg> G` | Print              |
+| `CAC C a b G`    | Add                |
+| `CAG C a b G`    | Subtract           |
+| `CAT C a b G`    | Multiply           |
+| `CCG C a b G`    | Divide             |
+| `GAC C a b G`    | Equal              |
+| `GAT C a b G`    | Not equal          |
+| `GGG C a b G`    | Lower than         |
+| `GGC C a b G`    | Lower or equal to  |
+| `CGG C a b G`    | Higher than        |
+| `CGC C a b G`    | Higher or equal to |
 
 ## Control Flow
 
