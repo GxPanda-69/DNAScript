@@ -9,6 +9,7 @@
   "scripts": {
     "start": "ts-node index.ts",
     "run": "ts-node run.ts",
+    "execute": "ts-node execute.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
