@@ -1,0 +1,16 @@
+GC previous1 AA TAT
+GC previous2 AA TTT
+GC current AA TAT
+GC i AA TAT
+
+TCGG C previous1 G
+
+GT GGC C i TGGGT G A
+  i AA CAC C i TTT G
+  current AA CAC C previous1 previous2 G
+  TCGG C current G
+  previous2 AA previous1
+  previous1 AA current
+T
+
+TCGG C GGG C TAT TTT G G

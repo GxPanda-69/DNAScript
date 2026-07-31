@@ -102,7 +102,7 @@ class Interpreter {
       },
     ],
     [
-      "CCC",
+      "GGG",
       (args: Node[]) => {
         const left = this.getValue(this.getValue(args[0]));
         const right = this.getValue(this.getValue(args[1]));
@@ -110,7 +110,7 @@ class Interpreter {
       },
     ],
     [
-      "CCG",
+      "GGC",
       (args: Node[]) => {
         const left = this.getValue(this.getValue(args[0]));
         const right = this.getValue(this.getValue(args[1]));
@@ -118,7 +118,7 @@ class Interpreter {
       },
     ],
     [
-      "GCC",
+      "CGG",
       (args: Node[]) => {
         const left = this.getValue(this.getValue(args[0]));
         const right = this.getValue(this.getValue(args[1]));
@@ -126,7 +126,7 @@ class Interpreter {
       },
     ],
     [
-      "GCG",
+      "CGC",
       (args: Node[]) => {
         const left = this.getValue(this.getValue(args[0]));
         const right = this.getValue(this.getValue(args[1]));
