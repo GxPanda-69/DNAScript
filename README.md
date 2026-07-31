@@ -55,7 +55,7 @@ npx ts-node run.ts example/hello.dna
 | `GAC C a b G`        | Is `a` equal to `b`                 |
 | `GAT C a b G`        | If `a` not equal to `b`             |
 | `GGG C a b G`        | Is `a` lower than `b`               |
-| `GGC C a b G`        | Is `a` ower or equal to `b`         |
+| `GGC C a b G`        | Is `a` lower or equal to `b`        |
 | `CGG C a b G`        | Is `a` higher than `b`              |
 | `CGC C a b G`        | Is `a` higher or equal to `b`       |
 | `TA C a G`           | NOT `a`                             |
