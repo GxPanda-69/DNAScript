@@ -1,10 +1,16 @@
 import { Token, TokenType } from "./tokenizer";
 
 class ParsingException extends Error {
-  value: any;
-  constructor(value: any) {
-    super();
-    this.value = value;
+  constructor(message: any) {
+    super("Parsing Error: \n  " + message);
+  }
+}
+
+class UnexpectedTokenException extends ParsingException {
+  constructor(position: number, expected: string, token: Token) {
+    super(
+      `>>> Unexpected token type at position ${position}, expected ${expected} and got ${token.type} <<<`,
+    );
   }
 }
 
@@ -124,7 +130,11 @@ class Parser {
     if (firstToken.type === TokenType.DECLARE_VARIABLE) {
       this.position++;
       if (this.getTokenRelative().type !== TokenType.NAME) {
-        throw new Error("Unexpected token at position " + this.position);
+        throw new UnexpectedTokenException(
+          this.position,
+          TokenType.NAME,
+          this.getTokenRelative(),
+        );
       }
       const variableIdentifier: Node = {
         type: "Identifier",
@@ -132,7 +142,11 @@ class Parser {
       };
       this.position++;
       if (this.getTokenRelative().type !== TokenType.SET) {
-        throw new Error("Unexpected token at position " + this.position);
+        throw new UnexpectedTokenException(
+          this.position,
+          TokenType.SET,
+          this.getTokenRelative(),
+        );
       }
       this.position++;
       return {
@@ -165,7 +179,11 @@ class Parser {
             if (currentToken.type === TokenType.G) {
               break;
             }
-            throw new Error("Unexpected token at position " + this.position);
+            throw new UnexpectedTokenException(
+              this.position,
+              TokenType.NAME,
+              this.getTokenRelative(),
+            );
           }
           parameters.push({
             type: "Identifier",
