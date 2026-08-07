@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { Interpreter } from "./interpreter";
 import { Parser } from "./parser";
 import { Tokenizer } from "./tokenizer";
