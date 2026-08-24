@@ -75,4 +75,19 @@ npx ts-node run.ts example/hello.dna
 
 ## Examples
 
+### For loops
+
+You might have noticed that for loops aren't implemented. This is because they can be recreated with the already existing features.
+For example, you could use the script
+
+```
+GC For AA CT C REPETITIONS BODY G
+  GC I AA TAT
+  GT GGG C I REPETITIONS G A
+    BODY C I G
+    I AA CAC C I TTT G
+  T
+TC
+```
+
 See `example/` folder.
