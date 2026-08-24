@@ -4,9 +4,28 @@ Esoteric language. Uses only A, T, C, G to imitate DNA.
 
 ## Usage
 
+Install dependecies: 
+
 ```
 npm install
+```
+
+Run a script:
+
+```
 npx ts-node run.ts example/hello.dna
+```
+
+or
+
+```
+npm run run example/hello.dna
+```
+
+Inline execution:
+
+```
+npm run execute "TCGG AHello, World!A"
 ```
 
 ## Types
